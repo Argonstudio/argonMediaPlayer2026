@@ -17,7 +17,7 @@ JavaScript медиа проигрыватель, умеет воспроизв�
 ```
 
 ### 2. Инициализация в JavaScript
-Вставьте в footer перед </body>.
+Вставьте в footer перед `</body>`.
 
 ```javascript
 <script>
