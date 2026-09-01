@@ -1,0 +1,361 @@
+/*!
+ * ArgonMediaPlayer v2.0.0
+ * https://argon-studio.ru/
+ * https://github.com/Argonstudio/argonMediaPlayer2026/
+ * 
+ * Основан на Argon HTML5 Player (2016)
+ * @author Ivan Voitkov
+ * 
+ * Copyright (c) 2026 Ivan Voitkov
+ * Released under the MIT License
+ */
+
+/* 1. Исправление блочной модели для всех элементов плеера */
+.argon-player-wrapper, 
+.argon-player-wrapper *, 
+.argon-player-wrapper *:before, 
+.argon-player-wrapper *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+/* 2. Основной контейнер (Сетка) */
+#argonMediaPlayer {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+/* 3. Карточка плеера */
+.argon-player-wrapper {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 calc(33.333% - 14px);
+    -ms-flex: 0 0 calc(33.333% - 14px);
+    flex: 0 0 calc(33.333% - 14px);
+    min-width: 280px;
+    margin-bottom: 20px;
+}
+
+/* 4. Контейнер самого видео/аудио */
+.argon-player-container {
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    /* Фикс для Android 8: принудительный аппаратный рендеринг */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+/* 5. Хак для пропорций 16:9 */
+.argon-player {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+    background: #000;
+    overflow: hidden;
+}
+
+/* Видео и изображения - растягиваем на весь контейнер */
+.argon-player video,
+.argon-audioImage,
+.argon-fonPlayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.argon-player video {
+    object-fit: cover;
+}
+
+.argon-audioImage {
+    object-fit: cover;
+    z-index: 2;
+}
+
+.argon-fonPlayer {
+    z-index: 5;
+    background: transparent;
+}
+
+/* 6. Кнопка Плей/Пауза (Центральная) */
+.argon-switchPlayer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    /* Центрирование для старых браузеров */
+    margin-top: -30px;
+    margin-left: -30px;
+    border: none;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    cursor: pointer;
+    outline: none;
+    z-index: 10;
+    -webkit-transition: opacity 0.3s;
+    transition: opacity 0.3s;
+}
+
+/* Рисуем иконки через псевдоэлементы (чтобы не зависеть от картинок) */
+.argon-switchPlayer.argon-start::before {
+    content: '';
+    display: block;
+    width: 0; height: 0;
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 20px solid white;
+    margin: 2px 0 0 17px;
+}
+
+.argon-switchPlayer.argon-pause::before {
+    content: '';
+    display: block;
+    width: 20px; height: 24px;
+    border-left: 6px solid white;
+    border-right: 6px solid white;
+    margin: 18px auto;
+}
+
+/* 7. Элементы управления (НИЖНЯЯ ПАНЕЛЬ) */
+/* Фикс: на старых Android bottom: 0 может глючить внутри padding-bottom: 0. 
+   Мы гарантируем z-index и привязку. */
+
+.argon-indicator {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 18px;
+    cursor: pointer;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.argon-loading {
+    position: absolute;
+    bottom: 0; left: 0; height: 18px;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 21;
+}
+
+.argon-runner {
+    position: absolute;
+    bottom: 0; left: 0; height: 18px;
+    background: #4a90e2;
+    z-index: 22;
+}
+
+/* Громкость и Фулскрин */
+.argon-volumeImg {
+    position: absolute;
+    bottom: 40px;
+    left: 10px;
+    width: 25px;
+    height: 25px;
+    z-index: 25;
+    cursor: pointer;
+}
+
+.argon-buttonsVolume {
+    position: absolute;
+    bottom: 40px;
+    left: 45px;
+    z-index: 25;
+    display: -webkit-flex;
+    display: flex;
+    gap: 5px;
+}
+
+.argon-buttonsVolume button {
+    width: 30px;
+    height: 25px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #959595;
+    color: white;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.argon-fullScreenPlayer { 
+    position: absolute; 
+    bottom: 37px;
+    right: 10px; 
+    width: 30px; 
+    height: 30px; 
+    border: none; 
+    background-color: #000;
+    /* Вставляем SVG прямо в CSS для надежности */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'/%3E%3C/svg%3E"); 
+    background-size: 80%; 
+    background-repeat: no-repeat; 
+    background-position: center; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    z-index: 25; 
+}
+
+/* 8. Заголовок */
+.argon-player-title {
+    padding: 10px;
+    background: #f5f5f5;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    position: relative;
+    z-index: 30;
+}
+
+/* 9. Адаптивность и Тач */
+@media (max-width: 768px) {
+    .argon-player-wrapper {
+        -webkit-flex: 0 0 100%;
+        flex: 0 0 100%;
+    }
+}
+
+/* Скрытие паузы на тач-устройствах (как было у вас) */
+@media (pointer: coarse), (hover: none), (-moz-touch-enabled) {
+    .argon-switchPlayer.argon-pause {
+        display: none !important;
+    }
+}
+
+/* Показ паузы при ховере на ПК */
+@media (hover: hover) and (min-width: 769px) {
+    .argon-player-container:hover .argon-switchPlayer.argon-pause {
+        opacity: 0.7;
+    }
+}
+
+/* --- Логика кнопки переключения --- */
+
+/* Кнопка ПЛЕЙ (когда видео стоит) - всегда видна */
+.argon-switchPlayer.argon-start {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Кнопка ПАУЗА (когда видео идет) - скрыта по умолчанию */
+.argon-switchPlayer.argon-pause {
+    opacity: 0;
+    pointer-events: none; /* Чтобы не мешала кликать по видео */
+}
+
+/* Появление кнопки ПАУЗА при наведении (только для десктопов) */
+@media (hover: hover) and (min-width: 769px) {
+    .argon-player-container:hover .argon-switchPlayer.argon-pause {
+        opacity: 0.7;
+        pointer-events: auto;
+    }
+    
+    .argon-switchPlayer.argon-pause:hover {
+        opacity: 1 !important;
+        background: rgba(0, 0, 0, 0.9);
+    }
+}
+
+/* Полное скрытие кнопки ПАУЗА на тач-устройствах (Android 8, iOS и т.д.) 
+   Воспроизведение на них управляется кликом по фону/видео */
+@media (pointer: coarse), (hover: none), (-moz-touch-enabled) {
+    .argon-switchPlayer.argon-pause {
+        display: none !important;
+    }
+}
+
+
+/* Чтобы на Android 8 кнопка не "прыгала", фиксируем центрирование */
+.argon-switchPlayer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60px;
+    height: 60px;
+    margin-top: -30px;
+    margin-left: -30px;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+/* Фикс растягивания превью и видео на Android 8 */
+.argon-player video, 
+.argon-audioImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Добавляем префикс и форсируем сохранение пропорций */
+    -webkit-object-fit: cover;
+    object-fit: cover;
+    
+    /* Фикс: если object-fit заглючит, используем черный фон, 
+       чтобы не было видно растянутых краев под картинкой */
+    background-color: #000;
+}
+
+/* Специальный хак для видео-постера в старом WebKit */
+.argon-player video[poster] {
+    -webkit-object-fit: cover;
+    object-fit: cover;
+}
+
+/* Когда видео начинает играть, убираем постер мгновенно */
+.argon-player.is-playing video {
+    background-image: none !important;
+}
+
+/* Ускоряем исчезновение элементов управления, чтобы не "лагали" при старте */
+.argon-switchPlayer, .argon-fonPlayer {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+}
+
+/* Стиль для нашего кастомного постера */
+.argon-custom-poster {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-color: #000;
+    z-index: 4; /* Выше видео, но ниже кнопок */
+    pointer-events: none; /* Чтобы не мешал кликам */
+    display: block;
+}
+
+/* Для аудио-режима постер не скрываем */
+.argon-audio-mode .argon-custom-poster {
+    display: block !important;
+}
+
+/* Убедимся, что видео не вылезает за рамки во время своего глюка */
+.argon-player {
+    overflow: hidden;
+    background: #000;
+}
+
+.argon-player video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
