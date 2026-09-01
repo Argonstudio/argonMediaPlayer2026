@@ -28,20 +28,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 src: 'argonMediaPlayer/media/video/farada.mp4',    // ссылка на видео
                 title: 'Первое видео',                             // заголовок
                 poster: 'argonMediaPlayer/media/video/farada.jpg'  // ссылка на постер
-            },
-            {
-                src: 'argonMediaPlayer/media/video/farada.mp4',    // ссылка на видео
-                title: 'Второе видео',                             // заголовок
-                poster: 'argonMediaPlayer/media/video/farada.jpg'  // ссылка на постер
-            },
-            {
-                src: 'argonMediaPlayer/media/video/farada.mp4',    // ссылка на видео
-                title: 'Третье видео',                             // заголовок
-                poster: 'argonMediaPlayer/media/video/farada.jpg'  // ссылка на постер
             }
         ]
     });
 });
+```
+
+---
 
 
 
