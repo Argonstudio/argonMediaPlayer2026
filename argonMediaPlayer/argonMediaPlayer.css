@@ -210,6 +210,10 @@
     z-index: 25; 
 }
 
+.argon-audio-mode .argon-fullScreenPlayer {
+    display: none;
+}
+
 /* 8. Заголовок */
 .argon-player-title {
     padding: 10px;
@@ -359,3 +363,4 @@
     height: 100% !important;
     object-fit: cover !important;
 }
+
